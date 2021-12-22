@@ -19,10 +19,10 @@
     <h1> Daftar Mahasiswa</h1>
         <?php foreach ($mahasiswa as $mhs) : ?>
             <ul>
-                    <li> NAMA    :<?= $mhs[0]; ?> </li>
-                    <li> NIM     :<?= $mhs[1]; ?> </li>
-                    <li> JURUSAN :<?= $mhs[2]; ?> </li>
-                    <li> EMAIL   :<?= $mhs[3]; ?> </li>
+                <li> NAMA    :<?= $mhs[0]; ?> </li>
+                <li> NIM     :<?= $mhs[1]; ?> </li>
+                <li> JURUSAN :<?= $mhs[2]; ?> </li>
+                <li> EMAIL   :<?= $mhs[3]; ?> </li>
             </ul>
         <?php endforeach; ?>
 </body>
