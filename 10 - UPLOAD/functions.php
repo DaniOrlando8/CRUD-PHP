@@ -2,7 +2,7 @@
     // Konek ke database | Simpan koneks didalam sebuah variabel $conn = mysqli_connect("localhost", "root", "", "phpdasar");
     $conn = mysqli_connect("localhost", "root", "", "phpdasar");
     
-
+// fungsi ambil data
     function query($query){
         global $conn;
 
@@ -14,6 +14,7 @@
         return $Kotak;
     }
 
+    //fungsi tambah data
 function tambah ($data){
     global $conn;
 
@@ -22,7 +23,13 @@ function tambah ($data){
     $jurusan = htmlspecialchars($data["jurusan"]);
     $kelas = htmlspecialchars($data["kelas"]);
     $matakuliah = htmlspecialchars($data["matakuliah"]);
-    $foto = htmlspecialchars($data["foto"]);
+    
+    // Upload gambar
+    $foto = upload();
+    if (!$foto) {
+        return false;
+    }
+
 
      // query insert data
      $query = "INSERT INTO mahasiswa VALUES ('', '$nama', '$nim', '$jurusan', '$kelas', '$matakuliah', '$foto')";
@@ -31,6 +38,56 @@ function tambah ($data){
      return mysqli_affected_rows($conn); 
 }
 
+//fungsi upload data
+function upload(){
+    
+    $namaFile = $_FILES['foto']['name'];
+    $ukuranFile = $_FILES['foto']['size'];
+    $error = $_FILES['foto']['error'];
+    $tmpName = $_FILES['foto']['tmp_name'];
+
+
+    //cek apakah tidak ada gambar yang di upload
+    if ($error === 4) {
+        echo "
+        <script>
+            alert('pilih gambar terebih dahulu!');
+        </script>";
+        return false;
+    }
+
+    //cek apakah yang diupoad adalah gambar
+    $exgambarValid = ['jpg','jpeg','png'];
+    $exGambar = explode('.', $namaFile);
+    $exGambar = strtolower (end($exGambar));
+    if (!in_array($exGambar, $exgambarValid)) {
+        echo "
+        <script>
+            alert('Anda tidak mengupload file gambar!');
+        </script>";
+        return false;
+    }
+
+    //cek jika ukuran gambar 
+    if ($ukuranFile > 1000000) {
+        echo "
+        <script>
+            alert('Ukuran gambar terlalu besar!');
+        </script>";
+        return false;
+    }
+
+    // generate nama gambar baru
+    $namaFilebaru = uniqid();
+    $namaFilebaru .= '.';
+    $namaFilebaru .= $exGambar;
+
+    // lolos pengecekan, gambar siap diupload
+    move_uploaded_file($tmpName, 'img/'. $namaFile);
+    return $namaFile;
+}
+
+// fungsi hapus data
 function hapus($id){
     global $conn;
 
@@ -39,6 +96,7 @@ function hapus($id){
     return mysqli_affected_rows($conn);
 }
 
+//fungsi ubah data
 function ubah($data){
     global $conn;
     $ID = $data["ID"];
@@ -47,7 +105,14 @@ function ubah($data){
     $jurusan = htmlspecialchars($data["jurusan"]);
     $kelas = htmlspecialchars($data["kelas"]);
     $matakuliah = htmlspecialchars($data["matakuliah"]);
-    $foto = htmlspecialchars($data["foto"]);
+    $gambarLama = htmlspecialchars($data["gambarLama"]);
+    
+    //cek apakaj user pilih gambar baru atau tidak
+    if ($_FILES['foto']['error']===4) {
+        $foto = $gambarLama;
+    }else{
+        $foto = upload();
+    }
 
      // query insert data
      $query = "UPDATE mahasiswa SET 
@@ -67,6 +132,7 @@ function ubah($data){
 
 }
 
+// Fungsi pencarian
 function cari ($keyword){
     $query = "SELECT * FROM mahasiswa 
     WHERE 
