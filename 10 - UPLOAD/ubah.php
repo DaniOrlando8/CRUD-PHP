@@ -68,7 +68,7 @@ $mhs = query("SELECT * FROM mahasiswa WHERE ID = $id")[0];
         <li>
             <label for="foto"> Foto: </label> <br>
             <img src="img/<?= $mhs["foto"] ?>" width="100"> <br>
-            <input type="file" name="foto" id="foto" required>
+            <input type="file" name="foto" id="foto" >
         </li>
         
             <button type="submit" name="submit">Ubah Data!</button>
